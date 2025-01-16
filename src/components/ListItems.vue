@@ -1,7 +1,13 @@
 <template>
   <v-container class="box-container">
+    <!-- Continents Tabs -->
+    <v-tabs v-model="selectedContinent" color="deep-orange" class="mt-6" fixed-tabs>
+      <v-tab v-for="continent in continents" :key="continent" :value="continent" >{{ continent }}</v-tab>
+    </v-tabs>
+
+    <!-- List Items Based on Selected Continent -->
     <v-row>
-      <v-col v-for="item in items" :key="item.id" cols="12" md="6" lg="3">
+      <v-col v-for="item in filteredItems" :key="item.id" cols="12" md="6" lg="3">
         <CardItem :item="item" />
       </v-col>
     </v-row>
@@ -9,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import axios from 'axios';
 import CardItem from '@/components/CardItem.vue';
 
@@ -30,16 +36,34 @@ interface Item {
 }
 
 const items = ref<Item[]>([]);
+const selectedContinent = ref<string>('');
+const continents = ref<string[]>([]);
 
-onMounted(() => {
+const filteredItems = computed(() => {
+  if (!selectedContinent.value) {
+    return items.value;
+  }
+  const allItems: Item[] = items.value.filter(item => item.continent === selectedContinent.value);
+  return [...allItems.values()].slice(0, 12);
+});
+
+const fetchItems = () => {
   axios.get<Item[]>('https://www.freetestapi.com/api/v1/destinations')
     .then(response => {
-      items.value = response.data.slice(0, 12);
-      console.log(items);
+      items.value = response.data;
+      const uniqueContinents = Array.from(new Set(items.value.map(item => item.continent)));
+      continents.value = uniqueContinents;
+      selectedContinent.value = uniqueContinents[0]; // Default to the first continent
     })
     .catch(error => {
       console.error('There was an error!', error);
     });
+};
+
+//watch(selectedContinent, (newContinent) => {});
+
+onMounted(() => {
+  fetchItems();
 });
 </script>
 
@@ -49,5 +73,4 @@ onMounted(() => {
   margin: 0 auto;
   padding: 0 20px;
 }
-
 </style>
