@@ -1,12 +1,12 @@
 <template>
   <v-container class="menu-container">
-    <v-row no-gutters align="center">
+    <v-row no-gutters align="start">
       <v-col cols="1" order="1">
         <v-sheet class="pa-1 ma-1">
           <v-img height="64" src="@/assets/logo.svg" />
         </v-sheet>
       </v-col>
-      <v-col order="2">
+      <v-col  order="2" class="">
         <v-sheet class="pt-4 mt-2">
           <v-text-field
             v-model="searchQuery"
@@ -23,10 +23,10 @@
         </v-sheet>
         
       </v-col>
-      <v-col cols="5" order="3">
+      <v-col cols="5" lg="5" order="3">
         <div class="pa-1 ma-1 d-flex justify-center items-center">
-          <a href="#" class="link">
-            Become a supplier
+          <a href="#" class="link d-flex justify-center align-center">
+            <p>Become a supplier</p>
           </a>
           <a href="#" class="link">
             <v-icon>mdi-heart</v-icon>
